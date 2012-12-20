@@ -31,6 +31,7 @@
 {
     [super viewDidLoad];
 	self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"Default-568h"]];
+	[self.showHideCalendarButton setHidden:YES];
 	self.aCalendar = [[SPCalendarView alloc]initWithFrame:defaultFrame];
 	self.aCalendar.delegate = self;
 	self.aCalendar.dataSource = self;
