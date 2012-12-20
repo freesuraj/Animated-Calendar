@@ -1,0 +1,381 @@
+//
+//  SPCalendarView.m
+//  BOD
+//
+//  Created by Suraj on 17/9/12.
+//  Copyright (c) 2012 Suraj. All rights reserved.
+//
+
+#import "SPCalendarView.h"
+#import <QuartzCore/QuartzCore.h>
+#import "NSDate+helper.h"
+
+#define defaultTodayColor					[UIColor colorWithRed:55.0/255.0 green:105.0/255.0 blue:105.0/255.0 alpha:0.6]
+#define defaultFrame							CGRectMake(0, 0, 40, 60)
+#define defaultRows								6
+#define defaultColumns						7
+#define defaultCornerRadius				6.0
+
+#define kTagMultiplier						11111
+#define kSeed											231
+
+@interface SPCalendarView()
+@property (nonatomic) CGRect boxFrame;
+@property (nonatomic) NSInteger rows, columns;
+@property (nonatomic, strong) UIView *highlightedView;
+@property (nonatomic, strong) NSIndexPath *highlightedIndexPath;
+@property (nonatomic, strong) NSTimer *timer;
+@property (nonatomic) NSInteger counts;
+@property (nonatomic, strong) NSDate *currentDate;
+@end
+
+@implementation SPCalendarView
+@synthesize boxFrame,rows,columns,delegate,highlightedView,highlightedIndexPath,timer,counts,currentDate;
+
+- (id)initWithFrame:(CGRect)frame
+{
+	self = [super initWithFrame:frame];
+	if (self) {
+		self.backgroundColor = [UIColor greenColor];
+	}
+	return self;
+}
+
+- (void)reloadData
+{
+	[self setUpCalendar];
+	[self addGestureRecognizer];
+	[self setNeedsDisplay];
+}
+
+- (UIView *)defaultBoxAtRow:(NSInteger)row AndColumn:(NSInteger)column
+{
+	UIView *box;
+	box.tag = (row+kSeed)*kTagMultiplier+(column+kSeed);
+	if([self.delegate respondsToSelector:@selector(viewForCellAtRow:AndColumn:)]){
+		box = [self.delegate viewForCellAtRow:row AndColumn:column];
+		return box;
+	}
+	box = [[UIView alloc]initWithFrame:self.boxFrame];
+	box.backgroundColor = [UIColor clearColor];
+	UIView *textLabelView = [self normalViewForCellAtRow:row AndColumn:column];
+	[box addSubview:textLabelView];
+	box.tag = (row+kSeed)*kTagMultiplier+(column+kSeed);
+	box.layer.borderWidth = 0.5;
+	box.layer.borderColor = [UIColor blackColor].CGColor;
+	box.layer.cornerRadius = defaultCornerRadius;
+	
+	return box;
+}
+
+- (UIView *)defaultSelectedBoxAtRow:(NSInteger)row AndColumn:(NSInteger)column
+{
+	UIView *box;
+	if([self.delegate respondsToSelector:@selector(selectedViewForCellAtRow:AndColumn:)]){
+		box = [self.delegate selectedViewForCellAtRow:row AndColumn:column];
+		return box;
+	}
+	box = [[UIView alloc]initWithFrame:self.boxFrame];
+	box.backgroundColor = [UIColor clearColor];
+	
+	UIView *textLabelView = [self highlightedViewForCellAtRow:row AndColumn:column];
+	[box addSubview:textLabelView];
+	box.layer.cornerRadius = defaultCornerRadius;
+	return box;
+}
+
+- (NSString *)textForCellAtRow:(NSInteger)row AndColumn:(NSInteger)column
+{
+	// get current date:
+	NSInteger indexOfFirstDate  = [self.currentDate dayOfTheFirstDayOfCurrentMonth]-1;
+	NSInteger prevMonthsTotal   = [self.currentDate totalDaysInPreviousMonth];
+	NSInteger currMonthsTotal   = [self.currentDate totalDaysInCurrentMonth];
+	NSInteger dayForTheCell = row*self.columns+column+1-indexOfFirstDate;
+	
+	if(row*self.columns+column < indexOfFirstDate){
+		dayForTheCell = prevMonthsTotal - (indexOfFirstDate - column - 1) ;
+	}
+	else if(dayForTheCell > currMonthsTotal){
+		dayForTheCell = dayForTheCell - currMonthsTotal ;
+	}
+	else {
+	}
+	
+	return [NSString stringWithFormat:@"%d",dayForTheCell];
+}
+
+- (UIView *)normalViewForCellAtRow:(NSInteger)row AndColumn:(NSInteger)column
+{
+	// get current date:
+	NSInteger indexOfFirstDate  = [self.currentDate dayOfTheFirstDayOfCurrentMonth]-1;
+	NSInteger prevMonthsTotal   = [self.currentDate totalDaysInPreviousMonth];
+	NSInteger currMonthsTotal   = [self.currentDate totalDaysInCurrentMonth];
+	NSInteger dayForTheCell = row*self.columns+column+1-indexOfFirstDate;
+	NSString *monthName;
+	
+	// calculate date for each cell, to find the cell for Today
+	NSCalendar *gregorian = [[NSCalendar alloc]
+													 initWithCalendarIdentifier:NSGregorianCalendar];
+	NSDateComponents *dateComponents =
+	[gregorian components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit) fromDate:self.currentDate];
+	
+	if(row*self.columns+column < indexOfFirstDate){
+		dayForTheCell = prevMonthsTotal - (indexOfFirstDate - column - 1) ;
+		monthName = [self.currentDate previousMonth];
+		[dateComponents setMonth:[dateComponents month] - 1];
+	}
+	else if(dayForTheCell > currMonthsTotal){
+		dayForTheCell = dayForTheCell - currMonthsTotal ;
+		monthName = [self.currentDate nextMonth];
+		[dateComponents setMonth:[dateComponents month] + 1];
+	}
+	else {
+		monthName = [self.currentDate currentMonth];
+	}
+	
+	[dateComponents setDay:dayForTheCell];
+	NSDate *dateForThisCell = [gregorian dateFromComponents:dateComponents];
+	
+	
+	
+	// View
+	UIView *viewToReturn = [[UIView alloc]initWithFrame:self.boxFrame];
+	UIView *upperView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.boxFrame.size.width/2, self.boxFrame.size.height)];
+	UILabel *textLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, upperView.frame.size.width, upperView.frame.size.height)];
+	textLabel.text = [monthName uppercaseString];
+	textLabel.textColor = [UIColor whiteColor];
+	textLabel.font = [UIFont fontWithName:@"Papyrus" size:8];
+	textLabel.textAlignment = UITextAlignmentLeft;
+	[textLabel setClipsToBounds:YES];
+	textLabel.backgroundColor = [UIColor clearColor];
+	[upperView setBackgroundColor:[UIColor clearColor]];
+	textLabel.transform = CGAffineTransformMakeRotation(3*M_PI/2);
+	[upperView addSubview:textLabel];
+	// day
+	UIView *lowerView = [[UIView alloc]initWithFrame:CGRectMake(self.boxFrame.size.width/2, 0, self.boxFrame.size.width/2, self.boxFrame.size.height)];
+	UILabel *textLabelDay = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, lowerView.frame.size.width, lowerView.frame.size.height)];
+	textLabelDay.text = [NSString stringWithFormat:@"%d",dayForTheCell];
+	textLabelDay.textColor = [UIColor redColor];
+	textLabelDay.font = [UIFont fontWithName:@"Papyrus" size:15];
+	textLabelDay.textAlignment = UITextAlignmentCenter;
+	[textLabelDay setClipsToBounds:YES];
+	textLabelDay.backgroundColor = [UIColor clearColor];
+	[lowerView setBackgroundColor:[UIColor clearColor]];
+	[lowerView addSubview:textLabelDay];
+	
+	if(dayForTheCell == 1)[viewToReturn addSubview:upperView];
+	if([dateForThisCell isItToday]){
+		[upperView setBackgroundColor:defaultTodayColor];
+		 [lowerView setBackgroundColor:defaultTodayColor];
+		[viewToReturn addSubview:upperView];
+<<<<<<< HEAD
+		viewToReturn.layer.cornerRadius = defaultCornerRadius;
+=======
+		viewToReturn.layer.cornerRadius = 6.0;
+>>>>>>> 3b4ab8ef9aad4b6667bc35957a5dad93f3c66e8a
+		viewToReturn.layer.masksToBounds = YES;
+	}
+	[viewToReturn addSubview:lowerView];
+	
+	return viewToReturn;
+
+}
+
+- (UIView *)highlightedViewForCellAtRow:(NSInteger)row AndColumn:(NSInteger)column
+{
+	
+	// get current date:
+	NSInteger indexOfFirstDate  = [self.currentDate dayOfTheFirstDayOfCurrentMonth]-1;
+	NSInteger prevMonthsTotal   = [self.currentDate totalDaysInPreviousMonth];
+	NSInteger currMonthsTotal   = [self.currentDate totalDaysInCurrentMonth];
+	NSInteger dayForTheCell = row*self.columns+column+1-indexOfFirstDate;
+	NSString *monthName;
+	if(row*self.columns+column < indexOfFirstDate){
+		dayForTheCell = prevMonthsTotal - (indexOfFirstDate - column - 1) ;
+		monthName = [self.currentDate previousMonth];
+	}
+	else if(dayForTheCell > currMonthsTotal){
+		dayForTheCell = dayForTheCell - currMonthsTotal ;
+		monthName = [self.currentDate nextMonth];
+	}
+	else {
+		monthName = [self.currentDate currentMonth];
+	}
+
+	// View
+	UIView *viewToReturn = [[UIView alloc]initWithFrame:self.boxFrame];
+<<<<<<< HEAD
+	viewToReturn.layer.cornerRadius = defaultCornerRadius;
+=======
+	viewToReturn.layer.cornerRadius = 6.0;
+>>>>>>> 3b4ab8ef9aad4b6667bc35957a5dad93f3c66e8a
+	viewToReturn.layer.masksToBounds = YES;
+	UIView *upperView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.boxFrame.size.width/2, self.boxFrame.size.height)];
+	UILabel *textLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, upperView.frame.size.width, upperView.frame.size.height)];
+	textLabel.text = [monthName uppercaseString];
+	textLabel.textColor = [UIColor blueColor];
+	textLabel.font = [UIFont fontWithName:@"Papyrus" size:8];
+	textLabel.textAlignment = UITextAlignmentLeft;
+	[textLabel setClipsToBounds:YES];
+	textLabel.backgroundColor = [UIColor clearColor];
+	[upperView setBackgroundColor:[UIColor redColor]];
+	textLabel.transform = CGAffineTransformMakeRotation(3*M_PI/2);
+	[upperView addSubview:textLabel];
+	// day
+	UIView *lowerView = [[UIView alloc]initWithFrame:CGRectMake(self.boxFrame.size.width/2, 0, self.boxFrame.size.width/2, self.boxFrame.size.height)];
+	UILabel *textLabelDay = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, lowerView.frame.size.width, lowerView.frame.size.height)];
+	textLabelDay.text = [NSString stringWithFormat:@"%d",dayForTheCell];
+	textLabelDay.textColor = [UIColor whiteColor];
+	textLabelDay.font = [UIFont fontWithName:@"Papyrus" size:15];
+	textLabelDay.textAlignment = UITextAlignmentCenter;
+	[textLabelDay setClipsToBounds:YES];
+	textLabelDay.backgroundColor = [UIColor clearColor];
+	[lowerView setBackgroundColor:[UIColor greenColor]];
+	[lowerView addSubview:textLabelDay];
+	
+	[viewToReturn addSubview:upperView];
+	[viewToReturn addSubview:lowerView];
+	return viewToReturn;
+}
+
+- (void)setUpCalendar
+{
+	[self readDataSource];
+	self.frame = CGRectMake(0, 0, self.columns*self.boxFrame.size.width, self.rows*self.boxFrame.size.height);
+	for(int i=0;i<self.columns;i++)
+	{
+		for(int j=0;j<self.rows;j++)
+		{
+			UIView *box = [self defaultBoxAtRow:j AndColumn:i];
+			CGFloat w = box.frame.size.width;
+			CGFloat h = box.frame.size.height;
+			box.center = CGPointMake(i*w+w/2, j*h+h/2);
+			[self addSubview:box];
+		}
+	}
+}
+
+- (void)readDataSource
+{
+	// read box size
+	if([self.delegate respondsToSelector:@selector(defaultBoxSize)]){
+		CGSize defSize = [self.delegate defaultBoxSize];
+		self.boxFrame = CGRectMake(0, 0, defSize.width, defSize.height);
+	}
+	else self.boxFrame = defaultFrame;
+	// read rows
+	if([self.delegate respondsToSelector:@selector(numberOfRows)]) self.rows = [self.delegate numberOfRows];
+	else self.rows = defaultRows;
+	// read columns
+	if([self.delegate respondsToSelector:@selector(numberOfColumns)]) self.columns = [self.delegate numberOfColumns];
+	else self.columns = defaultColumns;
+	// read date
+	if([self.delegate respondsToSelector:@selector(setDate)]) self.currentDate = [self.delegate setDate];
+	else self.currentDate = [NSDate date];
+}
+
+- (void)showStartUpAnimation
+{
+	self.timer = [NSTimer scheduledTimerWithTimeInterval:0.2 target:self selector:@selector(highlightAnIndexPath) userInfo:nil repeats:YES];
+}
+
+- (void)highlightAnIndexPath
+{
+	self.counts ++;
+	if(self.counts >= 6){
+		self.timer = nil;
+		return;
+	}
+	int row = 3;
+	int column = self.counts;
+	[self.highlightedView removeFromSuperview];
+	self.highlightedView = [self defaultSelectedBoxAtRow:row AndColumn:column];
+	self.highlightedView.frame = [self viewWithTag:(row+kSeed)*kTagMultiplier+(column+kSeed)].frame;
+	[self addSubview:self.highlightedView];
+	[self.delegate calendarView:self didHighlightIndexPath:[NSIndexPath indexPathForRow:row inSection:column]];
+}
+
+- (NSIndexPath *)indexPathForPoint:(CGPoint)point
+{
+	for(UIView *view in self.subviews)
+	{
+		if(CGRectContainsPoint(view.frame, point))
+		{
+			int row = view.tag/kTagMultiplier - kSeed;
+			int column = view.tag % kTagMultiplier - kSeed;
+			[self.highlightedView removeFromSuperview];
+			self.highlightedView = [self defaultSelectedBoxAtRow:row AndColumn:column];
+			self.highlightedView.frame = view.frame;
+			[self addSubview:self.highlightedView];
+			return [NSIndexPath indexPathForRow:row inSection:column];
+		}
+	}
+	return nil;
+}
+
+#pragma mark - Animation Functions
+
+- (void)showGlowTraceAtIndexPath:(NSIndexPath *)indexPath
+{
+	CGRect glowFrame = [self viewWithTag:(indexPath.row+kSeed)*kTagMultiplier+(indexPath.section+kSeed)].frame;
+	UIView *glowView = [[UIView alloc]initWithFrame:glowFrame];
+	[glowView setBackgroundColor:[UIColor whiteColor]];
+	[glowView setAlpha:0.7];
+	[self addSubview:glowView];
+	[UIView animateWithDuration:0.4 animations:^{
+		[glowView setAlpha:0.0];
+	} completion:^(BOOL finished) {
+		[glowView removeFromSuperview];
+	}];
+}
+
+- (void)showFadingWhiteBorderOnSelectedView
+{
+	UIView *borderView = [[UIView alloc]initWithFrame:self.highlightedView.frame];
+	[self addSubview:borderView];
+	borderView.backgroundColor = [UIColor clearColor];
+	borderView.layer.borderWidth = 1.2;
+	borderView.layer.cornerRadius = defaultCornerRadius;
+	borderView.layer.borderColor = [UIColor whiteColor].CGColor;
+	[UIView animateWithDuration:0.6 animations:^{
+		borderView.alpha = 0.0;
+	} completion:^(BOOL finished) {
+		[borderView removeFromSuperview];
+	}];
+}
+
+
+#pragma - Gesture Handler
+
+- (void)addGestureRecognizer
+{
+	UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(gestured:)];
+	UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(gestured:)];
+	[self addGestureRecognizer:pan];
+	[self addGestureRecognizer:tap];
+}
+
+- (void)gestured:(UIGestureRecognizer *)gesture
+{
+	CGPoint point = [gesture locationInView:self];
+	NSIndexPath *oldIndexPath = self.highlightedIndexPath;
+	self.highlightedIndexPath = [self indexPathForPoint:point];
+	if([oldIndexPath isEqual:self.highlightedIndexPath] == NO){
+		NSLog(@"point to highligh: (%d, %d)",oldIndexPath.row+1,oldIndexPath.section+1);
+		[self.delegate calendarView:self didHighlightIndexPath:self.highlightedIndexPath];
+		[self showFadingWhiteBorderOnSelectedView];
+		if([gesture isKindOfClass:[UIPanGestureRecognizer class]])[self showGlowTraceAtIndexPath:oldIndexPath];
+	}
+}
+
+/*
+ // Only override drawRect: if you perform custom drawing.
+ // An empty implementation adversely affects performance during animation.
+ - (void)drawRect:(CGRect)rect
+ {
+ [self setUpCalendar];
+ }
+ */
+
+
+@end
