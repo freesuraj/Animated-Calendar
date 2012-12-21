@@ -138,10 +138,7 @@
 				90663D4B1606F27A00CCA69B /* SPViewController.m */,
 				90663D4D1606F27A00CCA69B /* SPViewController.xib */,
 				90663D3F1606F27A00CCA69B /* Supporting Files */,
-				90663D6E1606FA8F00CCA69B /* SPCalendarView.h */,
-				90663D6F1606FA8F00CCA69B /* SPCalendarView.m */,
-				90821F611609BE5200C648A5 /* NSDate+helper.h */,
-				90821F621609BE5200C648A5 /* NSDate+helper.m */,
+				90D0A65C1683F36700943A04 /* SPCalendar */,
 			);
 			path = BOD;
 			sourceTree = "<group>";
@@ -184,6 +181,17 @@
 				90821F061608A76100C648A5 /* sample9.jpeg */,
 			);
 			path = "BOD Test";
+			sourceTree = "<group>";
+		};
+		90D0A65C1683F36700943A04 /* SPCalendar */ = {
+			isa = PBXGroup;
+			children = (
+				90663D6E1606FA8F00CCA69B /* SPCalendarView.h */,
+				90663D6F1606FA8F00CCA69B /* SPCalendarView.m */,
+				90821F611609BE5200C648A5 /* NSDate+helper.h */,
+				90821F621609BE5200C648A5 /* NSDate+helper.m */,
+			);
+			name = SPCalendar;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
