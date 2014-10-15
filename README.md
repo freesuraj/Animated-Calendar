@@ -3,7 +3,7 @@ Animated-Calendar
 
 A clone of animated calendar similar to the one used in Band of the day app (https://itunes.apple.com/us/app/band-of-the-day/id459664402?mt=8)
 
-![ScreenShot](http://www.gfycat.com/WindyGiganticAsiansmallclawedotter)
+![ScreenShot](http://i.giphy.com/5xtDarH4Y5ehr0tKGju.gif)
 
 Features
 ---------
