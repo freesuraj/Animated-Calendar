@@ -14,10 +14,6 @@ Features
 How to use
 -----------
 
-Cocoapods:
------------
-
-		pod 'SPCalenderView'
 
 
 **Files**
