@@ -15,7 +15,6 @@
 		90663D491606F27A00CCA69B /* SPAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 90663D481606F27A00CCA69B /* SPAppDelegate.m */; };
 		90663D4C1606F27A00CCA69B /* SPViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 90663D4B1606F27A00CCA69B /* SPViewController.m */; };
 		90663D4F1606F27A00CCA69B /* SPViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 90663D4D1606F27A00CCA69B /* SPViewController.xib */; };
-		90663D701606FA8F00CCA69B /* SPCalendarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 90663D6F1606FA8F00CCA69B /* SPCalendarView.m */; };
 		906B376D16817C6B00485C42 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 906B376C16817C6B00485C42 /* Default-568h@2x.png */; };
 		906B37841683019600485C42 /* return_cal_btn@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 906B37831683019600485C42 /* return_cal_btn@2x~ipad.png */; };
 		90821F071608A76100C648A5 /* sample0.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 90821EFE1608A76100C648A5 /* sample0.jpeg */; };
@@ -39,7 +38,8 @@
 		90821F261608BEEC00C648A5 /* bigsample2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 90821F1C1608BEEC00C648A5 /* bigsample2.jpg */; };
 		90821F271608BEEC00C648A5 /* bigsample1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 90821F1D1608BEEC00C648A5 /* bigsample1.jpg */; };
 		90821F281608BEEC00C648A5 /* bigsample0.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 90821F1E1608BEEC00C648A5 /* bigsample0.jpg */; };
-		90821F631609BE5200C648A5 /* NSDate+helper.m in Sources */ = {isa = PBXBuildFile; fileRef = 90821F621609BE5200C648A5 /* NSDate+helper.m */; };
+		ED51B8D419EE193B00D211A3 /* NSDate+helper.m in Sources */ = {isa = PBXBuildFile; fileRef = ED51B8D119EE193B00D211A3 /* NSDate+helper.m */; };
+		ED51B8D519EE193B00D211A3 /* SPCalendarView.m in Sources */ = {isa = PBXBuildFile; fileRef = ED51B8D319EE193B00D211A3 /* SPCalendarView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,8 +56,6 @@
 		90663D4A1606F27A00CCA69B /* SPViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SPViewController.h; sourceTree = "<group>"; };
 		90663D4B1606F27A00CCA69B /* SPViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SPViewController.m; sourceTree = "<group>"; };
 		90663D4E1606F27A00CCA69B /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/SPViewController.xib; sourceTree = "<group>"; };
-		90663D6E1606FA8F00CCA69B /* SPCalendarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPCalendarView.h; sourceTree = "<group>"; };
-		90663D6F1606FA8F00CCA69B /* SPCalendarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPCalendarView.m; sourceTree = "<group>"; };
 		906B376C16817C6B00485C42 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		906B37831683019600485C42 /* return_cal_btn@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "return_cal_btn@2x~ipad.png"; sourceTree = "<group>"; };
 		90821EFE1608A76100C648A5 /* sample0.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = sample0.jpeg; sourceTree = "<group>"; };
@@ -81,8 +79,10 @@
 		90821F1C1608BEEC00C648A5 /* bigsample2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = bigsample2.jpg; sourceTree = "<group>"; };
 		90821F1D1608BEEC00C648A5 /* bigsample1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = bigsample1.jpg; sourceTree = "<group>"; };
 		90821F1E1608BEEC00C648A5 /* bigsample0.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = bigsample0.jpg; sourceTree = "<group>"; };
-		90821F611609BE5200C648A5 /* NSDate+helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+helper.h"; sourceTree = "<group>"; };
-		90821F621609BE5200C648A5 /* NSDate+helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+helper.m"; sourceTree = "<group>"; };
+		ED51B8D019EE193B00D211A3 /* NSDate+helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDate+helper.h"; path = "SPCalendarView/NSDate+helper.h"; sourceTree = "<group>"; };
+		ED51B8D119EE193B00D211A3 /* NSDate+helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDate+helper.m"; path = "SPCalendarView/NSDate+helper.m"; sourceTree = "<group>"; };
+		ED51B8D219EE193B00D211A3 /* SPCalendarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SPCalendarView.h; path = SPCalendarView/SPCalendarView.h; sourceTree = "<group>"; };
+		ED51B8D319EE193B00D211A3 /* SPCalendarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SPCalendarView.m; path = SPCalendarView/SPCalendarView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -186,10 +186,10 @@
 		90D0A65C1683F36700943A04 /* SPCalendar */ = {
 			isa = PBXGroup;
 			children = (
-				90663D6E1606FA8F00CCA69B /* SPCalendarView.h */,
-				90663D6F1606FA8F00CCA69B /* SPCalendarView.m */,
-				90821F611609BE5200C648A5 /* NSDate+helper.h */,
-				90821F621609BE5200C648A5 /* NSDate+helper.m */,
+				ED51B8D019EE193B00D211A3 /* NSDate+helper.h */,
+				ED51B8D119EE193B00D211A3 /* NSDate+helper.m */,
+				ED51B8D219EE193B00D211A3 /* SPCalendarView.h */,
+				ED51B8D319EE193B00D211A3 /* SPCalendarView.m */,
 			);
 			name = SPCalendar;
 			sourceTree = "<group>";
@@ -283,8 +283,8 @@
 				90663D451606F27A00CCA69B /* main.m in Sources */,
 				90663D491606F27A00CCA69B /* SPAppDelegate.m in Sources */,
 				90663D4C1606F27A00CCA69B /* SPViewController.m in Sources */,
-				90663D701606FA8F00CCA69B /* SPCalendarView.m in Sources */,
-				90821F631609BE5200C648A5 /* NSDate+helper.m in Sources */,
+				ED51B8D419EE193B00D211A3 /* NSDate+helper.m in Sources */,
+				ED51B8D519EE193B00D211A3 /* SPCalendarView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
