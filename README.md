@@ -17,7 +17,7 @@ How to use
 Cocoapods:
 -----------
 
-		pod 'Cocoapods'
+		pod 'SPCalenderView'
 
 
 **Files**
