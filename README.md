@@ -3,6 +3,8 @@ Animated-Calendar
 
 A clone of animated calendar similar to the one used in Band of the day app (https://itunes.apple.com/us/app/band-of-the-day/id459664402?mt=8)
 
+![ScreenShot](http://www.gfycat.com/WindyGiganticAsiansmallclawedotter)
+
 Features
 ---------
 * incredibly easy to use and customize
@@ -11,6 +13,13 @@ Features
 
 How to use
 -----------
+
+Cocoapods:
+-----------
+
+		pod 'Cocoapods'
+
+
 **Files**
 
 Copy 4 files in the group (SPCalendar) into your project and you're ready to roll:
